@@ -69,9 +69,13 @@ defmodule Phoenix.PubSub.RabbitMQ do
       max_overflow: 0
     ]
 
+    pool_size = opts[:pool_size] || @pool_size
+    dispatch_rules = [{:broadcast, Phoenix.PubSub.RabbitMQServer, [name, pool_size]}]
+
     children = [
       :poolboy.child_spec(conn_pool_name, conn_pool_opts, [opts]),
       :poolboy.child_spec(pub_pool_name, pub_pool_opts, conn_pool_name),
+      supervisor(Phoenix.PubSub.LocalSupervisor, [name, pool_size, dispatch_rules]),
       worker(Phoenix.PubSub.RabbitMQServer, [name, conn_pool_name, pub_pool_name, opts])
     ]
     supervise children, strategy: :one_for_one
