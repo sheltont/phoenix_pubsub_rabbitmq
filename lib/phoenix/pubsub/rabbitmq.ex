@@ -69,6 +69,7 @@ defmodule Phoenix.PubSub.RabbitMQ do
       max_overflow: 0
     ]
 
+    
     pool_size = opts[:pool_size] || @pool_size
     dispatch_rules = [{:broadcast, Phoenix.PubSub.RabbitMQServer, [name, pool_size]}]
 
